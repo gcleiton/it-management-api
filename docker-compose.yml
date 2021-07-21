@@ -1,0 +1,13 @@
+version: "3"
+services:
+  api:
+    container_name: api-container
+    image: node:16
+    working_dir: /usr/src/ts-api-boilerplate
+    restart: always
+    command: bash -c "yarn install --prod && yarn debug"
+    volumes:
+      - ./dist/:/usr/src/ts-api-boilerplate/dist/
+      - ./package.json:/usr/src/ts-api-boilerplate/package.json
+    ports:
+      - "5050:5050"
