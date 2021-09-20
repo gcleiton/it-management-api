@@ -17,7 +17,8 @@
     "test:unit": "yarn test --watch -c jest-unit.config.js",
     "test:integration": "yarn test --watch -c jest-integration.config.js",
     "test:staged": "yarn test --findRelatedTests",
-    "test:ci": "yarn test --coverage"
+    "test:ci": "yarn test --coverage",
+    "postinstall": "husky install"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
@@ -45,6 +46,6 @@
     "rimraf": "^3.0.2"
   },
   "engines": {
-    "node": "16.x"
+    "node": "14.x"
   }
 }
