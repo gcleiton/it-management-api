@@ -1,6 +1,9 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 
-import { CheckAccountByUsernameRepository } from '@/domain/contracts/repositories'
+import {
+  CheckAccountByEmailRepository,
+  CheckAccountByUsernameRepository
+} from '@/domain/contracts/repositories'
 import { AddAccount } from '@/domain/usecases'
 import { UsernameInUseError } from '@/domain/entities/errors'
 
@@ -14,12 +17,13 @@ describe('AddAccount Usecase', () => {
     email: 'any_email'
   }
 
-  let accountRepository: MockProxy<CheckAccountByUsernameRepository>
+  let accountRepository: MockProxy<
+    CheckAccountByUsernameRepository & CheckAccountByEmailRepository
+  >
   let sut: AddAccount
 
   beforeAll(() => {
-    console.log('test')
-    accountRepository = mock<CheckAccountByUsernameRepository>()
+    accountRepository = mock()
   })
 
   beforeEach(() => {
@@ -41,5 +45,16 @@ describe('AddAccount Usecase', () => {
     const promise = sut.add(fakeAccount)
 
     await expect(promise).rejects.toThrow(new UsernameInUseError())
+  })
+
+  it('should call CheckAccountByEmailRepository with correct input', async () => {
+    await sut.add(fakeAccount)
+
+    console.log('test')
+
+    expect(accountRepository.checkByEmail).toHaveBeenCalledWith({
+      email: fakeAccount.email
+    })
+    expect(accountRepository.checkByEmail).toHaveBeenCalledTimes(1)
   })
 })
