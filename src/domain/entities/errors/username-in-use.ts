@@ -1,5 +1,5 @@
 export class UsernameInUseError extends Error {
   constructor() {
-    super('Este e-mail já está sendo usado.')
+    super('Este nome de usuário já está sendo usado.')
   }
 }

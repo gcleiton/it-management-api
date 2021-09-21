@@ -5,7 +5,7 @@ import {
   CheckAccountByUsernameRepository
 } from '@/domain/contracts/repositories'
 import { AddAccount } from '@/domain/usecases'
-import { UsernameInUseError } from '@/domain/entities/errors'
+import { EmailInUseError, UsernameInUseError } from '@/domain/entities/errors'
 
 describe('AddAccount Usecase', () => {
   const fakeAccount = {
@@ -56,5 +56,13 @@ describe('AddAccount Usecase', () => {
       email: fakeAccount.email
     })
     expect(accountRepository.checkByEmail).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw EmailInUseError when email already taken', async () => {
+    accountRepository.checkByEmail.mockResolvedValueOnce(true)
+
+    const promise = sut.add(fakeAccount)
+
+    await expect(promise).rejects.toThrow(new EmailInUseError())
   })
 })

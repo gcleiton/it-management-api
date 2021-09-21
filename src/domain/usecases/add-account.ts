@@ -2,7 +2,7 @@ import {
   CheckAccountByEmailRepository,
   CheckAccountByUsernameRepository
 } from '@/domain/contracts/repositories'
-import { UsernameInUseError } from '@/domain/entities/errors'
+import { EmailInUseError, UsernameInUseError } from '@/domain/entities/errors'
 
 type Input = {
   username: string
@@ -28,8 +28,12 @@ export class AddAccount {
       throw new UsernameInUseError()
     }
 
-    await this.accountRepository.checkByEmail({
+    const emailInUse = await this.accountRepository.checkByEmail({
       email: input.email
     })
+
+    if (emailInUse) {
+      throw new EmailInUseError()
+    }
   }
 }
