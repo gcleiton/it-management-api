@@ -1,6 +1,8 @@
 import { mock, MockProxy } from 'jest-mock-extended'
+
 import { CheckAccountByUsernameRepository } from '@/domain/contracts/repositories'
 import { AddAccount } from '@/domain/usecases'
+import { UsernameInUseError } from '@/domain/entities/errors'
 
 describe('AddAccount Usecase', () => {
   const fakeAccount = {
@@ -31,5 +33,13 @@ describe('AddAccount Usecase', () => {
       username: fakeAccount.username
     })
     expect(accountRepository.checkByUsername).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw UsernameInUseError when username already taken', async () => {
+    accountRepository.checkByUsername.mockResolvedValueOnce(true)
+
+    const promise = sut.add(fakeAccount)
+
+    await expect(promise).rejects.toThrow(new UsernameInUseError())
   })
 })

@@ -1,4 +1,5 @@
 import { CheckAccountByUsernameRepository } from '@/domain/contracts/repositories'
+import { UsernameInUseError } from '@/domain/entities/errors'
 
 type Input = {
   username: string
@@ -16,6 +17,12 @@ export class AddAccount {
   ) {}
 
   async add(input: Input): Promise<void> {
-    this.accountRepository.checkByUsername({ username: input.username })
+    const usernameInUse = await this.accountRepository.checkByUsername({
+      username: input.username
+    })
+
+    if (usernameInUse) {
+      throw new UsernameInUseError()
+    }
   }
 }
