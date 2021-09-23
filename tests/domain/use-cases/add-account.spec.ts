@@ -33,7 +33,11 @@ describe('AddAccount Usecase', () => {
 
   beforeAll(() => {
     accountRepository = mock()
+    accountRepository.add.mockResolvedValue({
+      id: 'any_id'
+    })
     cryptography = mock()
+    cryptography.hash.mockResolvedValue('hashed_password')
   })
 
   beforeEach(() => {
@@ -101,8 +105,6 @@ describe('AddAccount Usecase', () => {
   })
 
   it('should call AddAccountRepository with correct input', async () => {
-    cryptography.hash.mockResolvedValueOnce('hashed_password')
-
     await sut.add(fakeAccount)
 
     expect(accountRepository.add).toHaveBeenCalledWith({
@@ -110,5 +112,11 @@ describe('AddAccount Usecase', () => {
       password: 'hashed_password'
     })
     expect(accountRepository.add).toHaveBeenCalledTimes(1)
+  })
+
+  it('should return id on success', async () => {
+    const { id } = await sut.add(fakeAccount)
+
+    expect(id).toEqual('any_id')
   })
 })

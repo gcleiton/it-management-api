@@ -19,6 +19,10 @@ type Input = {
   phone?: string
 }
 
+type Output = {
+  id: string
+}
+
 export class AddAccount {
   constructor(
     private readonly accountRepository: CheckAccountByUsernameRepository &
@@ -27,9 +31,8 @@ export class AddAccount {
     private readonly cryptography: Hasher
   ) {}
 
-  async add(input: Input): Promise<void> {
+  async add(input: Input): Promise<Output> {
     const errors = await this.canPerform(input)
-
     if (errors.length > 0) {
       throw new ValidationError(errors)
     }
@@ -38,7 +41,12 @@ export class AddAccount {
       plaintext: input.password
     })
 
-    await this.accountRepository.add({ ...input, password: hashedPassword })
+    const { id } = await this.accountRepository.add({
+      ...input,
+      password: hashedPassword
+    })
+
+    return { id }
   }
 
   private async canPerform(input: Input): Promise<Error[]> {
