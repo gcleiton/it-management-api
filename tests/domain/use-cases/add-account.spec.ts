@@ -45,7 +45,7 @@ describe('AddAccount Usecase', () => {
   })
 
   it('should call CheckAccountByUsernameRepository with correct input', async () => {
-    await sut.add(fakeAccount)
+    await sut.perform(fakeAccount)
 
     expect(accountRepository.checkByUsername).toHaveBeenCalledWith({
       username: fakeAccount.username
@@ -56,7 +56,7 @@ describe('AddAccount Usecase', () => {
   it('should throw UsernameInUseError when username already taken', async () => {
     accountRepository.checkByUsername.mockResolvedValueOnce(true)
 
-    const promise = sut.add(fakeAccount)
+    const promise = sut.perform(fakeAccount)
 
     await expect(promise).rejects.toThrow(
       new ValidationError([new UsernameInUseError()])
@@ -64,7 +64,7 @@ describe('AddAccount Usecase', () => {
   })
 
   it('should call CheckAccountByEmailRepository with correct input', async () => {
-    await sut.add(fakeAccount)
+    await sut.perform(fakeAccount)
 
     console.log('test')
 
@@ -77,7 +77,7 @@ describe('AddAccount Usecase', () => {
   it('should throw ValidationError when email already taken', async () => {
     accountRepository.checkByEmail.mockResolvedValueOnce(true)
 
-    const promise = sut.add(fakeAccount)
+    const promise = sut.perform(fakeAccount)
 
     await expect(promise).rejects.toThrow(
       new ValidationError([new EmailInUseError()])
@@ -88,7 +88,7 @@ describe('AddAccount Usecase', () => {
     accountRepository.checkByEmail.mockResolvedValueOnce(true)
     accountRepository.checkByUsername.mockResolvedValueOnce(true)
 
-    const promise = sut.add(fakeAccount)
+    const promise = sut.perform(fakeAccount)
 
     await expect(promise).rejects.toThrow(
       new ValidationError([new EmailInUseError(), new UsernameInUseError()])
@@ -96,7 +96,7 @@ describe('AddAccount Usecase', () => {
   })
 
   it('should call Hasher with correct input', async () => {
-    await sut.add(fakeAccount)
+    await sut.perform(fakeAccount)
 
     expect(cryptography.hash).toHaveBeenCalledWith({
       plaintext: fakeAccount.password
@@ -105,7 +105,7 @@ describe('AddAccount Usecase', () => {
   })
 
   it('should call AddAccountRepository with correct input', async () => {
-    await sut.add(fakeAccount)
+    await sut.perform(fakeAccount)
 
     expect(accountRepository.add).toHaveBeenCalledWith({
       ...fakeAccount,
@@ -115,7 +115,7 @@ describe('AddAccount Usecase', () => {
   })
 
   it('should return id on success', async () => {
-    const { id } = await sut.add(fakeAccount)
+    const { id } = await sut.perform(fakeAccount)
 
     expect(id).toEqual('any_id')
   })

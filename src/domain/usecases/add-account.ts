@@ -31,7 +31,7 @@ export class AddAccount {
     private readonly cryptography: Hasher
   ) {}
 
-  async add(input: Input): Promise<Output> {
+  async perform(input: Input): Promise<Output> {
     const errors = await this.canPerform(input)
     if (errors.length > 0) {
       throw new ValidationError(errors)
