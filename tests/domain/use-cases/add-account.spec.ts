@@ -10,6 +10,7 @@ import {
   UsernameInUseError,
   ValidationError
 } from '@/domain/entities/errors'
+import { Hasher } from '@/domain/contracts/gateways'
 
 describe('AddAccount Usecase', () => {
   const fakeAccount = {
@@ -24,14 +25,16 @@ describe('AddAccount Usecase', () => {
   let accountRepository: MockProxy<
     CheckAccountByUsernameRepository & CheckAccountByEmailRepository
   >
+  let cryptography: Hasher
   let sut: AddAccount
 
   beforeAll(() => {
     accountRepository = mock()
+    cryptography = mock()
   })
 
   beforeEach(() => {
-    sut = new AddAccount(accountRepository)
+    sut = new AddAccount(accountRepository, cryptography)
   })
 
   it('should call CheckAccountByUsernameRepository with correct input', async () => {
@@ -83,5 +86,14 @@ describe('AddAccount Usecase', () => {
     await expect(promise).rejects.toThrow(
       new ValidationError([new EmailInUseError(), new UsernameInUseError()])
     )
+  })
+
+  it('should call Hasher with correct input', async () => {
+    await sut.add(fakeAccount)
+
+    expect(cryptography.hash).toHaveBeenCalledWith({
+      plaintext: fakeAccount.password
+    })
+    expect(cryptography.hash).toHaveBeenCalledTimes(1)
   })
 })
