@@ -5,7 +5,11 @@ import {
   CheckAccountByUsernameRepository
 } from '@/domain/contracts/repositories'
 import { AddAccount } from '@/domain/usecases'
-import { EmailInUseError, UsernameInUseError } from '@/domain/entities/errors'
+import {
+  EmailInUseError,
+  UsernameInUseError,
+  ValidationError
+} from '@/domain/entities/errors'
 
 describe('AddAccount Usecase', () => {
   const fakeAccount = {
@@ -44,7 +48,9 @@ describe('AddAccount Usecase', () => {
 
     const promise = sut.add(fakeAccount)
 
-    await expect(promise).rejects.toThrow(new UsernameInUseError())
+    await expect(promise).rejects.toThrow(
+      new ValidationError([new UsernameInUseError()])
+    )
   })
 
   it('should call CheckAccountByEmailRepository with correct input', async () => {
@@ -58,11 +64,24 @@ describe('AddAccount Usecase', () => {
     expect(accountRepository.checkByEmail).toHaveBeenCalledTimes(1)
   })
 
-  it('should throw EmailInUseError when email already taken', async () => {
+  it('should throw ValidationError when email already taken', async () => {
     accountRepository.checkByEmail.mockResolvedValueOnce(true)
 
     const promise = sut.add(fakeAccount)
 
-    await expect(promise).rejects.toThrow(new EmailInUseError())
+    await expect(promise).rejects.toThrow(
+      new ValidationError([new EmailInUseError()])
+    )
+  })
+
+  it('should throw ValidationError when email and username already taken', async () => {
+    accountRepository.checkByEmail.mockResolvedValueOnce(true)
+    accountRepository.checkByUsername.mockResolvedValueOnce(true)
+
+    const promise = sut.add(fakeAccount)
+
+    await expect(promise).rejects.toThrow(
+      new ValidationError([new EmailInUseError(), new UsernameInUseError()])
+    )
   })
 })

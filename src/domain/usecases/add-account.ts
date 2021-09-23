@@ -2,7 +2,11 @@ import {
   CheckAccountByEmailRepository,
   CheckAccountByUsernameRepository
 } from '@/domain/contracts/repositories'
-import { EmailInUseError, UsernameInUseError } from '@/domain/entities/errors'
+import {
+  EmailInUseError,
+  UsernameInUseError,
+  ValidationError
+} from '@/domain/entities/errors'
 
 type Input = {
   username: string
@@ -21,19 +25,30 @@ export class AddAccount {
   ) {}
 
   async add(input: Input): Promise<void> {
+    const errors = await this.canPerform(input)
+
+    if (errors.length > 0) {
+      throw new ValidationError(errors)
+    }
+  }
+
+  private async canPerform(input: Input): Promise<Error[]> {
+    const errors = []
+
     const usernameInUse = await this.accountRepository.checkByUsername({
       username: input.username
     })
     if (usernameInUse) {
-      throw new UsernameInUseError()
+      errors.push(new UsernameInUseError())
     }
 
     const emailInUse = await this.accountRepository.checkByEmail({
       email: input.email
     })
-
     if (emailInUse) {
-      throw new EmailInUseError()
+      errors.push(new EmailInUseError())
     }
+
+    return errors
   }
 }
