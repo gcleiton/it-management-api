@@ -25,3 +25,18 @@ export namespace CheckAccountByEmailRepository {
 
   export type Output = boolean
 }
+
+export interface AddAccountRepository {
+  add: (input: AddAccountRepository.Input) => void
+}
+
+export namespace AddAccountRepository {
+  export type Input = {
+    username: string
+    firstName: string
+    lastName: string
+    password: string
+    email: string
+    phone?: string
+  }
+}

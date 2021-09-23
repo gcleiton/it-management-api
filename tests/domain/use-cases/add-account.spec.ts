@@ -1,6 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 
 import {
+  AddAccountRepository,
   CheckAccountByEmailRepository,
   CheckAccountByUsernameRepository
 } from '@/domain/contracts/repositories'
@@ -23,9 +24,11 @@ describe('AddAccount Usecase', () => {
   }
 
   let accountRepository: MockProxy<
-    CheckAccountByUsernameRepository & CheckAccountByEmailRepository
+    CheckAccountByUsernameRepository &
+      CheckAccountByEmailRepository &
+      AddAccountRepository
   >
-  let cryptography: Hasher
+  let cryptography: MockProxy<Hasher>
   let sut: AddAccount
 
   beforeAll(() => {
@@ -95,5 +98,17 @@ describe('AddAccount Usecase', () => {
       plaintext: fakeAccount.password
     })
     expect(cryptography.hash).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call AddAccountRepository with correct input', async () => {
+    cryptography.hash.mockResolvedValueOnce('hashed_password')
+
+    await sut.add(fakeAccount)
+
+    expect(accountRepository.add).toHaveBeenCalledWith({
+      ...fakeAccount,
+      password: 'hashed_password'
+    })
+    expect(accountRepository.add).toHaveBeenCalledTimes(1)
   })
 })
