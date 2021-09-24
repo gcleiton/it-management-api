@@ -43,5 +43,13 @@ describe('PostgresAccountRepository', () => {
 
       expect(isUsernameInUse).toBeTruthy()
     })
+
+    it('should return false if username is not already taken', async () => {
+      const isUsernameInUse = await sut.checkByUsername({
+        username: 'any_username'
+      })
+
+      expect(isUsernameInUse).toBeFalsy()
+    })
   })
 })
