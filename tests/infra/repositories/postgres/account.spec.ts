@@ -10,7 +10,6 @@ describe('PostgresAccountRepository', () => {
     firstName: 'any_firstname',
     lastName: 'any_lastName',
     password: 'any_password',
-    passwordConfirmation: 'any_password',
     email: 'any_email'
   }
 
@@ -70,6 +69,17 @@ describe('PostgresAccountRepository', () => {
       })
 
       expect(isEmailInUse).toBeFalsy()
+    })
+  })
+
+  describe('add', () => {
+    it('should return an account id on success', async () => {
+      const { id } = await sut.add(fakeAccount)
+      const postgresUser = await postgresUserRepository.findOne(id)
+
+      expect(postgresUser).toMatchObject({
+        id: parseInt(id)
+      })
     })
   })
 })

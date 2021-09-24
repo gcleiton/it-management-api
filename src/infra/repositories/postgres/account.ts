@@ -1,4 +1,5 @@
 import {
+  AddAccountRepository,
   CheckAccountByEmailRepository,
   CheckAccountByUsernameRepository
 } from '@/domain/contracts/repositories'
@@ -28,5 +29,14 @@ export class PostgresAccountRepository
     })
 
     return locatedUser !== undefined
+  }
+
+  async add(
+    input: AddAccountRepository.Input
+  ): Promise<AddAccountRepository.Output> {
+    const postgresAccountRepository = getRepository(PostgresUser)
+    const { id } = await postgresAccountRepository.save(input)
+
+    return { id: id.toString() }
   }
 }
