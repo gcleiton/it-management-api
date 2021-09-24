@@ -52,4 +52,24 @@ describe('PostgresAccountRepository', () => {
       expect(isUsernameInUse).toBeFalsy()
     })
   })
+
+  describe('checkByEmail', () => {
+    it('should return true if email is already taken', async () => {
+      await postgresUserRepository.save(fakeAccount)
+
+      const isEmailInUse = await sut.checkByEmail({
+        email: 'any_email'
+      })
+
+      expect(isEmailInUse).toBeTruthy()
+    })
+
+    it('should return false if email is not already taken', async () => {
+      const isEmailInUse = await sut.checkByEmail({
+        email: 'any_email'
+      })
+
+      expect(isEmailInUse).toBeFalsy()
+    })
+  })
 })
