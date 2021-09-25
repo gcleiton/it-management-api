@@ -5,7 +5,6 @@
 * Nome
 * Sobrenome
 * Senha
-* Confirmação da Senha
 * Email
 * Telefone
 

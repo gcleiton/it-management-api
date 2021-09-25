@@ -18,8 +18,6 @@
 
   `password=[string]`
 
-  `passwordConfirmation=[string]`
-
   `email=[string]`
 
   **Optional:**
