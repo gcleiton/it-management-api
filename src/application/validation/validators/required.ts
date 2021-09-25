@@ -10,3 +10,15 @@ export class RequiredValidator implements Validator {
     }
   }
 }
+
+export class StringRequiredValidator extends RequiredValidator {
+  constructor(override readonly value: string) {
+    super(value)
+  }
+
+  override validate(): Error | undefined {
+    if (super.validate() !== undefined || this.value === '') {
+      return new RequiredFieldError()
+    }
+  }
+}

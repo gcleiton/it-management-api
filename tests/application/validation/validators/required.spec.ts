@@ -1,7 +1,10 @@
 import { RequiredFieldError } from '@/application/errors'
-import { RequiredValidator } from '@/application/validation/validators'
+import {
+  RequiredValidator,
+  StringRequiredValidator
+} from '@/application/validation/validators'
 
-describe('Required', () => {
+describe('RequiredValidator', () => {
   it('should return RequiredFieldError if value is null', () => {
     const sut = new RequiredValidator(null)
 
@@ -20,6 +23,30 @@ describe('Required', () => {
 
   it('should return undefined if value is not empty', () => {
     const sut = new RequiredValidator('any_value')
+
+    const error = sut.validate()
+
+    expect(error).toBeUndefined()
+  })
+})
+
+describe('StringRequiredValidator', () => {
+  it('should extends RequiredValidator', () => {
+    const sut = new StringRequiredValidator('')
+
+    expect(sut).toBeInstanceOf(RequiredValidator)
+  })
+
+  it('should return RequiredFieldError if value is empty', () => {
+    const sut = new StringRequiredValidator('')
+
+    const error = sut.validate()
+
+    expect(error).toEqual(new RequiredFieldError())
+  })
+
+  it('should return undefined if value is not empty', () => {
+    const sut = new StringRequiredValidator('any_value')
 
     const error = sut.validate()
 
