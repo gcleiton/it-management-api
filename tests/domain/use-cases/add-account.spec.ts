@@ -66,8 +66,6 @@ describe('AddAccount Usecase', () => {
   it('should call CheckAccountByEmailRepository with correct input', async () => {
     await sut.perform(fakeAccount)
 
-    console.log('test')
-
     expect(accountRepository.checkByEmail).toHaveBeenCalledWith({
       email: fakeAccount.email
     })
