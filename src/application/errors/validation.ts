@@ -16,3 +16,9 @@ export class InvalidEmailError extends Error {
     super('O campo deve ser um endereço de e-mail válido.')
   }
 }
+
+export class InvalidPhoneError extends Error {
+  constructor() {
+    super('O campo deve ser um número de contato válido.')
+  }
+}
