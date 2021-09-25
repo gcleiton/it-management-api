@@ -10,3 +10,9 @@ export class StringMinFieldError extends Error {
     super(`O campo deve ter pelo menos ${value} caracteres.`)
   }
 }
+
+export class InvalidEmailError extends Error {
+  constructor() {
+    super('O campo deve ser um endereço de e-mail válido.')
+  }
+}
